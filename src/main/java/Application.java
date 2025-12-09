@@ -1,6 +1,6 @@
 import model.ResourceType;
 import service.CoffeeService;
-import service.CoffeeServiceImpl;
+import service.impl.CoffeeServiceImpl;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -17,32 +17,45 @@ public class Application {
         do {
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
-            if (scanner.nextLine().equalsIgnoreCase("Yes")) {
+
+            String userInput = scanner.nextLine();
+            if (userInput.equalsIgnoreCase("Yes")) {
                 suggestAnAction(scanner);
+            } else if (userInput.equalsIgnoreCase("No")) {
+                showAfterStartMenu(scanner);
             } else {
-                System.out.println("Do you want to: \n1. Confirm order. \n2. Run as administrator. ");
-                if (scanner.hasNextInt()) {
-                    int numberOfAction = scanner.nextInt();
-                    scanner.nextLine();
-
-                    if (numberOfAction == 1) {
-                        printCurrentOrderAndTotalAmount();
-                        confirmOrder(scanner);
-                        isThatNotAll = false;
-                    }
-                    if (numberOfAction == 2) {
-                        int action = runAsAdmin(scanner);
-                        processingAdminActions(action, scanner);
-                    }
-
-                    if (numberOfAction < 1 || numberOfAction > 2) {
-                        System.out.println("Please, only number 1 or 2");
-                    }
-                } else {
-                    System.out.println("Please, only number 1 or 2");
-                }
+                printAMessageAboutIncorrectInput();
             }
         } while (isThatNotAll);
+    }
+
+    public static void showAfterStartMenu(Scanner scanner) {
+        System.out.println("Do you want to: \n" +
+                "1. Confirm order. \n" +
+                "2. Run as administrator. \n" +
+                "3. Thank you, I have to go.");
+
+        if (scanner.hasNextInt()) {
+            int numberOfAction = scanner.nextInt();
+
+            switch (numberOfAction) {
+                case 1 -> {
+                    printCurrentOrderAndTotalAmount();
+                    confirmOrder(scanner);
+                }
+                case 2 -> {
+                    int action = runAsAdmin(scanner);
+                    processingAdminActions(action, scanner);
+                }
+                case 3 -> {
+                    System.out.println("Have a good day!");
+                    isThatNotAll = false;
+                }
+            }
+
+        } else {
+            printAMessageAboutIncorrectInput();
+        }
     }
 
     public static void suggestExistResources() {
@@ -74,15 +87,16 @@ public class Application {
         if (scanner.hasNextInt()) {
             numberOfActionForAdmin = scanner.nextInt();
             scanner.nextLine();
-
-            if (numberOfActionForAdmin < 1 || numberOfActionForAdmin > 3) {
-                System.out.println("Enter only number from 1 to 3, please!");
-            }
         } else {
-            System.out.println("Enter only number from 1 to 3, please!");
+            printAMessageAboutIncorrectInput();
             scanner.nextLine();
+            runAsAdmin(scanner);
         }
         return numberOfActionForAdmin;
+    }
+
+    public static void printAMessageAboutIncorrectInput() {
+        System.out.println("Please, only the answers given." + "\n");
     }
 
     public static void processingAdminActions(int action, Scanner scanner) {
@@ -99,18 +113,20 @@ public class Application {
             }
             case 3 -> suggestAnAction(scanner);
         }
+
+        printAMessageAboutIncorrectInput();
     }
 
     public static void purchaseResources(Scanner scanner) {
         int sumAtStorage = coffeeService.getSumProfit();
-        int minPriceForResource = ResourceType.SUGAR.getPrice();
+        int minPriceForResource = 2;
 
         if (sumAtStorage > minPriceForResource) {
             System.out.println("What resource needs to be purchased? \n" +
-                    "1. Coffee\n" +
-                    "2. Sugar\n" +
-                    "3. Syrup\n" +
-                    "4. Donut\n" +
+                    "1. Coffee (10$)\n" +
+                    "2. Sugar (2$)\n" +
+                    "3. Syrup (3$)\n" +
+                    "4. Donut (4$)\n" +
                     "5. That's all, thank you.");
             int numberOfResource = inputValidationFrom1To5(scanner);
 
@@ -122,26 +138,25 @@ public class Application {
                 case 5 -> suggestAnAction(scanner);
             }
         } else {
-            System.out.println("We have no money :(");
+            System.out.println("We have no money for this :(");
         }
     }
 
     public static int inputValidationFrom1To5(Scanner scanner) {
-        int numberOfAction = 0;
-
-        if (scanner.hasNextInt()) {
-            numberOfAction = scanner.nextInt();
-            scanner.nextLine();
-
-            if (numberOfAction < 1 || numberOfAction > 5) {
-                System.out.println("Enter only number from 1 to 5, please!");
-                return inputValidationFrom1To5(scanner);
+        while (true) {
+            if (!scanner.hasNextInt()) {
+                printAMessageAboutIncorrectInput();
+                scanner.nextLine();
             }
-        } else {
-            System.out.println("Enter only number from 1 to 5, please!");
+
+            int numberOfAction = scanner.nextInt();
             scanner.nextLine();
+
+            if (numberOfAction >= 1 && numberOfAction <= 5) {
+                return numberOfAction;
+            }
+            printAMessageAboutIncorrectInput();
         }
-        return numberOfAction;
     }
 
     public static void suggestAnAction(Scanner scanner) {
@@ -151,7 +166,6 @@ public class Application {
         int numberOfAction = inputValidationFrom1To5(scanner);
         processSupplement(numberOfAction, scanner);
     }
-
 
     private static void processSupplement(int action, Scanner scanner) {
         switch (action) {
@@ -185,12 +199,12 @@ public class Application {
             System.out.println(resourceType + " x " + quantity);
         });
 
-        System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + "\n");
+        System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
     }
 
     public static void confirmOrder(Scanner scanner) {
         System.out.println("Confirm order? Yes/No");
-
+        scanner.nextLine();
         String answer = scanner.nextLine();
 
         if (answer.equalsIgnoreCase("yes")) {

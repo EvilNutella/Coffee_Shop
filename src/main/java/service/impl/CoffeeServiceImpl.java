@@ -1,13 +1,12 @@
-package service;
+package service.impl;
 
-import lombok.Getter;
-import lombok.Setter;
 import model.ResourceType;
+import service.CoffeeService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-@Setter
-@Getter
+
 public class CoffeeServiceImpl implements CoffeeService {
 
     public int getSumProfit() {
@@ -38,9 +37,9 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public void buyResource(ResourceType resource) {
         if (sumProfit > resource.getPrice()) {
-        int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
-        storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
-        sumProfit = sumProfit - resource.getPrice();
+            int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
+            storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
+            sumProfit -= resource.getPrice();
             System.out.println("The resource has been purchased!");
         } else {
             System.out.println("We have no money for this :(");
@@ -54,8 +53,6 @@ public class CoffeeServiceImpl implements CoffeeService {
             orderQuantityByType.put(resource, currentQuantityInOrder + 1);
 
             totalOrderAmount += resource.getPrice();
-        } else {
-            System.out.println("Sorry, it's out of stock.");
         }
     }
 
