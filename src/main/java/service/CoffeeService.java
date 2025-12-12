@@ -12,7 +12,7 @@ public interface CoffeeService {
     int getTotalOrderAmount();
     void cancelTheOrder();
     boolean hasResource(ResourceType resource);
-    void buyResource(ResourceType resource);
+    boolean canBuyResource(int id);
 
     int getSumProfit();
 }

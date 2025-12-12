@@ -12,9 +12,10 @@ public class Application {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to our cafe!");
+
 
         do {
+            System.out.println("Welcome to our cafe!");
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
@@ -37,6 +38,7 @@ public class Application {
 
         if (scanner.hasNextInt()) {
             int numberOfAction = scanner.nextInt();
+            scanner.nextLine();
 
             switch (numberOfAction) {
                 case 1 -> {
@@ -51,28 +53,41 @@ public class Application {
                     System.out.println("Have a good day!");
                     isThatNotAll = false;
                 }
+                default -> {
+                    printAMessageAboutIncorrectInput();
+                    showAfterStartMenu(scanner);
+                }
             }
-
         } else {
             printAMessageAboutIncorrectInput();
+            scanner.nextLine();
+            showAfterStartMenu(scanner);
         }
     }
 
     public static void suggestExistResources() {
         if (coffeeService.hasResource(ResourceType.COFFEE)) {
-            System.out.println("1. COFFEE;");
+            System.out.println(ResourceType.COFFEE.getId()
+                    + ". " + ResourceType.COFFEE.getDisplayName()
+                    + " " + ResourceType.COFFEE.getPrice() + "$;");
         }
 
         if (coffeeService.hasResource(ResourceType.SUGAR)) {
-            System.out.println("2. SUGAR;");
+            System.out.println(ResourceType.SUGAR.getId()
+                    + ". " + ResourceType.SUGAR.getDisplayName()
+                    + " " + ResourceType.SUGAR.getPrice() + "$;");
         }
 
         if (coffeeService.hasResource(ResourceType.SYRUP)) {
-            System.out.println("3. SYRUP;");
+            System.out.println(ResourceType.SYRUP.getId()
+                    + ". " + ResourceType.SYRUP.getDisplayName()
+                    + " " + ResourceType.SYRUP.getPrice() + "$;");
         }
 
         if (coffeeService.hasResource(ResourceType.DONUT)) {
-            System.out.println("4. DONUT;");
+            System.out.println(ResourceType.DONUT.getId()
+                    + ". " + ResourceType.DONUT.getDisplayName()
+                    + " " + ResourceType.DONUT.getPrice() + "$;");
         }
     }
 
@@ -119,44 +134,69 @@ public class Application {
 
     public static void purchaseResources(Scanner scanner) {
         int sumAtStorage = coffeeService.getSumProfit();
-        int minPriceForResource = 2;
+        int minPriceForResource = ResourceType.getMinPrice();
+
+        printAllResource();
 
         if (sumAtStorage > minPriceForResource) {
             System.out.println("What resource needs to be purchased? \n" +
-                    "1. Coffee (10$)\n" +
-                    "2. Sugar (2$)\n" +
-                    "3. Syrup (3$)\n" +
-                    "4. Donut (4$)\n" +
-                    "5. That's all, thank you.");
+                    ResourceType.COFFEE.getId() + ". "
+                    + ResourceType.COFFEE.getDisplayName()
+                    + " " + (ResourceType.COFFEE.getPrice() - 1) + "$;\n"
+
+                    + ResourceType.SUGAR.getId() + ". "
+                    + ResourceType.SUGAR.getDisplayName() + " "
+                    + (ResourceType.SUGAR.getPrice() - 1) + "$;\n"
+
+                    + ResourceType.SYRUP.getId() + ". "
+                    + ResourceType.SYRUP.getDisplayName() + " "
+                    + (ResourceType.SYRUP.getPrice() - 1) + "$;\n"
+
+                    + ResourceType.DONUT.getId() + ". "
+                    + ResourceType.DONUT.getDisplayName() + " "
+                    + (ResourceType.DONUT.getPrice() - 1) + "$;\n"
+
+                    + "5. That's all, thank you.");
             int numberOfResource = inputValidationFrom1To5(scanner);
 
-            switch (numberOfResource) {
-                case 1 -> coffeeService.buyResource(ResourceType.COFFEE);
-                case 2 -> coffeeService.buyResource(ResourceType.SUGAR);
-                case 3 -> coffeeService.buyResource(ResourceType.SYRUP);
-                case 4 -> coffeeService.buyResource(ResourceType.DONUT);
-                case 5 -> suggestAnAction(scanner);
+            if (numberOfResource < 5) {
+                boolean willBeEnoughMoney = coffeeService.canBuyResource(numberOfResource);
+                if (willBeEnoughMoney) {
+                    System.out.println("The resource has been purchased! \n");
+                } else {
+                    System.out.println("We have no money for this :( \n");
+                }
+                purchaseResources(scanner);
+            } else {
+                suggestAnAction(scanner);
             }
         } else {
-            System.out.println("We have no money for this :(");
+            System.out.println("We have no money for this :( \n");
         }
     }
 
+
     public static int inputValidationFrom1To5(Scanner scanner) {
-        while (true) {
-            if (!scanner.hasNextInt()) {
+        boolean isValid = false;
+        int number = 0;
+
+        while (!isValid) {
+            if (scanner.hasNextInt()) {
+                number = scanner.nextInt();
+                scanner.nextLine();
+
+                if (number >= 1 && number <= 5) {
+                    isValid = true;
+                } else {
+                    printAMessageAboutIncorrectInput();
+                }
+            } else {
                 printAMessageAboutIncorrectInput();
                 scanner.nextLine();
             }
-
-            int numberOfAction = scanner.nextInt();
-            scanner.nextLine();
-
-            if (numberOfAction >= 1 && numberOfAction <= 5) {
-                return numberOfAction;
-            }
-            printAMessageAboutIncorrectInput();
         }
+
+        return number;
     }
 
     public static void suggestAnAction(Scanner scanner) {
@@ -168,16 +208,12 @@ public class Application {
     }
 
     private static void processSupplement(int action, Scanner scanner) {
-        switch (action) {
-            case 1 -> coffeeService.addResourceInOrder(ResourceType.COFFEE);
-            case 2 -> coffeeService.addResourceInOrder(ResourceType.SUGAR);
-            case 3 -> coffeeService.addResourceInOrder(ResourceType.SYRUP);
-            case 4 -> coffeeService.addResourceInOrder(ResourceType.DONUT);
-            case 5 -> {
-                isThatNotAll = false;
-                printCurrentOrderAndTotalAmount();
-                confirmOrder(scanner);
-            }
+        if (action < 5) {
+            coffeeService.addResourceInOrder(ResourceType.getById(action));
+        } else {
+            isThatNotAll = false;
+            printCurrentOrderAndTotalAmount();
+            confirmOrder(scanner);
         }
     }
 
@@ -187,8 +223,9 @@ public class Application {
 
         currentOrderQuantityByType.forEach((resourceType, integer) -> {
             System.out.println(resourceType + " x " + integer);
-            System.out.println("Total: " + coffeeService.getTotalOrderAmount() + " $");
         });
+
+        System.out.println("Total: " + coffeeService.getTotalOrderAmount() + " $");
     }
 
     private static void printAllResource() {
@@ -204,13 +241,13 @@ public class Application {
 
     public static void confirmOrder(Scanner scanner) {
         System.out.println("Confirm order? Yes/No");
-        scanner.nextLine();
         String answer = scanner.nextLine();
 
         if (answer.equalsIgnoreCase("yes")) {
             printCurrentOrderAndTotalAmount();
             coffeeService.calculateRevenue();
-            System.out.println("The order is confirmed!");
+            System.out.println("The order is confirmed! \n");
+
         } else if (answer.equalsIgnoreCase("no")) {
             coffeeService.cancelTheOrder();
             System.out.println("The order has been cancelled.");

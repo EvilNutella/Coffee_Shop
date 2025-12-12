@@ -35,15 +35,18 @@ public class CoffeeServiceImpl implements CoffeeService {
     }
 
     @Override
-    public void buyResource(ResourceType resource) {
+    public boolean canBuyResource(int id) {
+        boolean wasResourcePurchased = false;
+
+        ResourceType resource = ResourceType.getById(id);
+
         if (sumProfit > resource.getPrice()) {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
             sumProfit -= resource.getPrice();
-            System.out.println("The resource has been purchased!");
-        } else {
-            System.out.println("We have no money for this :(");
+            wasResourcePurchased = true;
         }
+        return wasResourcePurchased;
     }
 
     @Override
