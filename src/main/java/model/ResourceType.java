@@ -3,6 +3,7 @@ package model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,24 +19,38 @@ public enum ResourceType {
     private final int price;
     private final String displayName;
 
-    private static final Map<Integer, ResourceType> IDBYRESOURCE = new HashMap<>();
-    private static final Map<ResourceType, Integer> RESOURCEBYPRICE = new HashMap<>();
+    private static final Map<Integer, ResourceType> RESOURCE_BY_ID = new HashMap<>();
+
+    public String toString() {
+        return id + ". " + displayName + " " + price + "$";
+    }
 
     static {
         for (ResourceType resource : values()) {
-            IDBYRESOURCE.put(resource.id, resource);
-            RESOURCEBYPRICE.put(resource, resource.price);
+            RESOURCE_BY_ID.put(resource.id, resource);
         }
     }
 
     public static ResourceType getById(int id) {
-        return IDBYRESOURCE.get(id);
+        return RESOURCE_BY_ID.get(id);
+    }
+
+    public static int getMaxId() {
+        int maxId =
+                Arrays.stream(ResourceType.values())
+                        .mapToInt(ResourceType::getId)
+                        .max()
+                        .orElse(0);
+
+        return maxId;
     }
 
     public static int getMinPrice() {
-        Integer minPrice = RESOURCEBYPRICE.values().stream()
-                .min(Integer::compareTo)
-                .orElse(null);
+        int minPrice =
+                Arrays.stream(ResourceType.values())
+                        .mapToInt(ResourceType::getPrice)
+                        .min()
+                        .orElse(0);
 
         return minPrice;
     }

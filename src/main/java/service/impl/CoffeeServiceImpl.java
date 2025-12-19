@@ -3,6 +3,7 @@ package service.impl;
 import model.ResourceType;
 import service.CoffeeService;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,17 +15,16 @@ public class CoffeeServiceImpl implements CoffeeService {
     }
 
     private int sumProfit = 15;
-    private int totalOrderAmount = 10;
+    private int totalOrderAmount = 0;
 
     Map<ResourceType, Integer> orderQuantityByType = new HashMap<>();
     Map<ResourceType, Integer> storageQuantityByType = new HashMap<>();
 
     public CoffeeServiceImpl() {
-        orderQuantityByType.put(ResourceType.COFFEE, 1);
-        storageQuantityByType.put(ResourceType.COFFEE, 3);
-        storageQuantityByType.put(ResourceType.SYRUP, 4);
-        storageQuantityByType.put(ResourceType.SUGAR, 4);
-        storageQuantityByType.put(ResourceType.DONUT, 4);
+        Arrays.stream(ResourceType.values())
+                .forEach(type -> storageQuantityByType.put(type, 4));
+
+        addResourceInOrder(ResourceType.COFFEE);
     }
 
     @Override
@@ -54,6 +54,9 @@ public class CoffeeServiceImpl implements CoffeeService {
         if (hasResource(resource)) {
             int currentQuantityInOrder = orderQuantityByType.getOrDefault(resource, 0);
             orderQuantityByType.put(resource, currentQuantityInOrder + 1);
+
+            int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
+            storageQuantityByType.put(resource, currentQuantityAtStorage - 1);
 
             totalOrderAmount += resource.getPrice();
         }
