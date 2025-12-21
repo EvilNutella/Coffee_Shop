@@ -6,26 +6,31 @@ import service.CoffeeService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class CoffeeServiceImpl implements CoffeeService {
-
-    public int getSumProfit() {
-        return sumProfit;
-    }
-
-    private int sumProfit = 15;
-    private int totalOrderAmount = 0;
     private final int QUANTITY_OF_RESOURCES_AT_START = 4;
 
     Map<ResourceType, Integer> orderQuantityByType = new HashMap<>();
-    Map<ResourceType, Integer> storageQuantityByType = new HashMap<>();
+    Map<ResourceType, Integer> storageQuantityByType;
+
+    private int sumProfit = 15;
+    private int totalOrderAmount = 0;
 
     public CoffeeServiceImpl() {
-        Arrays.stream(ResourceType.values())
-                .forEach(type -> storageQuantityByType.put(type, QUANTITY_OF_RESOURCES_AT_START));
+        storageQuantityByType = Arrays.stream(ResourceType.values())
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        type -> QUANTITY_OF_RESOURCES_AT_START
+                ));
 
         addResourceInOrder(ResourceType.COFFEE);
+    }
+
+    public int getSumProfit() {
+        return sumProfit;
     }
 
     @Override

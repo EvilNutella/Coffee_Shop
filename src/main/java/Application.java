@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Application {
-    public static CoffeeService coffeeService = new CoffeeServiceImpl();
-    private static boolean isThatNotAll = true;
     private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.getMAX_ID() + 1;
 
+    public static CoffeeService coffeeService = new CoffeeServiceImpl();
+    private static boolean isThatNotAll = true;
+
+
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-
 
         do {
             System.out.println("Welcome to our cafe!");

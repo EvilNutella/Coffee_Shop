@@ -16,19 +16,17 @@ public enum ResourceType {
     SYRUP(3, 3, "Syrup"),
     DONUT(4, 4, "Donut");
 
-    private final int id;
-    private final int price;
-    private final String displayName;
+    private static final Map<Integer, ResourceType> RESOURCE_BY_ID =
+            Arrays.stream(ResourceType.values())
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toMap(resource -> resource.id, resource -> resource),
+                            Collections::unmodifiableMap));
 
     private static final int MAX_ID =
             Arrays.stream(ResourceType.values())
-            .mapToInt(ResourceType::getId)
-            .max()
-            .orElse(0);
-
-    public static int getMAX_ID() {
-        return MAX_ID;
-    }
+                    .mapToInt(ResourceType::getId)
+                    .max()
+                    .orElse(0);
 
     private static final int MIN_PRICE =
             Arrays.stream(ResourceType.values())
@@ -36,26 +34,20 @@ public enum ResourceType {
                     .min()
                     .orElse(0);
 
+    private final int id;
+    private final int price;
+    private final String displayName;
+
+    public static int getMAX_ID() {
+        return MAX_ID;
+    }
+
     public static int getMinPrice() {
         return MIN_PRICE;
     }
 
-
-    private static final Map<Integer, ResourceType> RESOURCE_BY_ID =
-            Arrays.stream(ResourceType.values())
-                    .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(resource -> resource.id, resource -> resource),
-                            Collections::unmodifiableMap));
-
-
     public String toString() {
         return id + ". " + displayName + " " + price + "$";
-    }
-
-    static {
-        for (ResourceType resource : values()) {
-            RESOURCE_BY_ID.put(resource.id, resource);
-        }
     }
 
     public static ResourceType getById(int id) {
