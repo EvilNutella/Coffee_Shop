@@ -8,8 +8,7 @@ import java.util.Scanner;
 public class Application {
     public static CoffeeService coffeeService = new CoffeeServiceImpl();
     private static boolean isThatNotAll = true;
-    private static final int MAX_ID_OF_RESOURCES = ResourceType.getMaxId();
-    private static final int MAX_ID_PLUS_ONE = MAX_ID_OF_RESOURCES + 1;
+    private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.getMAX_ID() + 1;
 
     public static void main(String[] args) {
 
@@ -68,7 +67,7 @@ public class Application {
     }
 
     public static void suggestExistResources() {
-        for (int id = 1; id <= MAX_ID_OF_RESOURCES; id++) {
+        for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
             ResourceType resource = ResourceType.getById(id);
             if (coffeeService.hasResource(resource)) {
                 System.out.println(resource);
@@ -126,16 +125,16 @@ public class Application {
         if (sumAtStorage > minPriceForResource) {
             System.out.println("What resource needs to be purchased?");
 
-            for (int id = 1; id <= MAX_ID_OF_RESOURCES; id++) {
+            for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
                 ResourceType resource = ResourceType.getById(id);
                 if (coffeeService.hasResource(resource)) {
                     System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
                 }
             }
-            System.out.println(MAX_ID_PLUS_ONE + ". That's all, thank you.");
-            int numberOfResource = inputValidationFrom1To5(scanner);
+            System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
+            int numberOfResource = inputValidationFrom1ToMaxId(scanner);
 
-            if (numberOfResource < MAX_ID_PLUS_ONE) {
+            if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
                 boolean willBeEnoughMoney = coffeeService.canBuyResource(numberOfResource);
                 if (willBeEnoughMoney) {
                     System.out.println("The resource has been purchased! \n");
@@ -152,7 +151,7 @@ public class Application {
     }
 
 
-    public static int inputValidationFrom1To5(Scanner scanner) {
+    public static int inputValidationFrom1ToMaxId(Scanner scanner) {
         boolean isValid = false;
         int number = 0;
 
@@ -161,7 +160,7 @@ public class Application {
                 number = scanner.nextInt();
                 scanner.nextLine();
 
-                if (number >= 1 && number <= MAX_ID_PLUS_ONE) {
+                if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     isValid = true;
                 } else {
                     printAMessageAboutIncorrectInput();
@@ -178,13 +177,13 @@ public class Application {
     public static void suggestAnAction(Scanner scanner) {
         System.out.println("What would you like to add to your order?");
         suggestExistResources();
-        System.out.println(MAX_ID_PLUS_ONE + ". That's all, thank you.");
-        int numberOfAction = inputValidationFrom1To5(scanner);
+        System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
+        int numberOfAction = inputValidationFrom1ToMaxId(scanner);
         processSupplement(numberOfAction, scanner);
     }
 
     private static void processSupplement(int action, Scanner scanner) {
-        if (action < MAX_ID_PLUS_ONE) {
+        if (action < MAX_ID_OF_RESOURCES_PLUS_ONE) {
             coffeeService.addResourceInOrder(ResourceType.getById(action));
         } else {
             isThatNotAll = false;

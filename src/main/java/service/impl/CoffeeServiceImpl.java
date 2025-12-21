@@ -16,13 +16,14 @@ public class CoffeeServiceImpl implements CoffeeService {
 
     private int sumProfit = 15;
     private int totalOrderAmount = 0;
+    private final int QUANTITY_OF_RESOURCES_AT_START = 4;
 
     Map<ResourceType, Integer> orderQuantityByType = new HashMap<>();
     Map<ResourceType, Integer> storageQuantityByType = new HashMap<>();
 
     public CoffeeServiceImpl() {
         Arrays.stream(ResourceType.values())
-                .forEach(type -> storageQuantityByType.put(type, 4));
+                .forEach(type -> storageQuantityByType.put(type, QUANTITY_OF_RESOURCES_AT_START));
 
         addResourceInOrder(ResourceType.COFFEE);
     }
