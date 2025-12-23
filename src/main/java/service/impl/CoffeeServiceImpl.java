@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 public class CoffeeServiceImpl implements CoffeeService {
     private final int QUANTITY_OF_RESOURCES_AT_START = 4;
 
-    Map<ResourceType, Integer> orderQuantityByType = new HashMap<>();
-    Map<ResourceType, Integer> storageQuantityByType;
+    private Map<ResourceType, Integer> orderQuantityByType = new HashMap<>();
+    private Map<ResourceType, Integer> storageQuantityByType;
 
     private int sumProfit = 15;
     private int totalOrderAmount = 0;
@@ -42,15 +42,13 @@ public class CoffeeServiceImpl implements CoffeeService {
 
     @Override
     public boolean canBuyResource(int id) {
-        boolean wasResourcePurchased = false;
-
         ResourceType resource = ResourceType.getById(id);
+        boolean wasResourcePurchased = sumProfit > resource.getPrice();
 
-        if (sumProfit > resource.getPrice()) {
+        if (wasResourcePurchased) {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
             sumProfit -= resource.getPrice();
-            wasResourcePurchased = true;
         }
         return wasResourcePurchased;
     }
@@ -91,9 +89,12 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public void cancelTheOrder() {
         orderQuantityByType.forEach((resourceType, quantity) -> {
-
             int quantityAtStorageAfterReturns = storageQuantityByType.get(resourceType) + quantity;
             storageQuantityByType.put(resourceType, quantityAtStorageAfterReturns);
         });
+        orderQuantityByType.clear();
+        orderQuantityByType.put(ResourceType.COFFEE, 1);
+
+        totalOrderAmount = 10;
     }
 }

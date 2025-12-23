@@ -14,9 +14,9 @@ public class Application {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to our cafe!");
 
         do {
-            System.out.println("Welcome to our cafe!");
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
@@ -32,38 +32,42 @@ public class Application {
     }
 
     public static void showAfterStartMenu(Scanner scanner) {
-        System.out.println("Do you want to: \n" +
-                "1. Confirm order. \n" +
-                "2. Run as administrator. \n" +
-                "3. Thank you, I have to go.");
+        boolean needToRepeat;
+        do {
+            needToRepeat = false;
+            System.out.println("Do you want to: \n" +
+                    "1. Confirm order. \n" +
+                    "2. Run as administrator. \n" +
+                    "3. Thank you, I have to go.");
 
-        if (scanner.hasNextInt()) {
-            int numberOfAction = scanner.nextInt();
-            scanner.nextLine();
+            if (scanner.hasNextInt()) {
+                int numberOfAction = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (numberOfAction) {
-                case 1 -> {
-                    printCurrentOrderAndTotalAmount();
-                    confirmOrder(scanner);
+                switch (numberOfAction) {
+                    case 1 -> {
+                        printCurrentOrderAndTotalAmount();
+                        confirmOrder(scanner);
+                    }
+                    case 2 -> {
+                        int action = runAsAdmin(scanner);
+                        processingAdminActions(action, scanner);
+                    }
+                    case 3 -> {
+                        System.out.println("Have a good day!");
+                        isThatNotAll = false;
+                    }
+                    default -> {
+                        printAMessageAboutIncorrectInput();
+                        needToRepeat = true;
+                    }
                 }
-                case 2 -> {
-                    int action = runAsAdmin(scanner);
-                    processingAdminActions(action, scanner);
-                }
-                case 3 -> {
-                    System.out.println("Have a good day!");
-                    isThatNotAll = false;
-                }
-                default -> {
-                    printAMessageAboutIncorrectInput();
-                    showAfterStartMenu(scanner);
-                }
+            } else {
+                printAMessageAboutIncorrectInput();
+                scanner.nextLine();
+                needToRepeat = true;
             }
-        } else {
-            printAMessageAboutIncorrectInput();
-            scanner.nextLine();
-            showAfterStartMenu(scanner);
-        }
+        } while (needToRepeat);
     }
 
     public static void suggestExistResources() {
@@ -76,21 +80,25 @@ public class Application {
     }
 
     public static int runAsAdmin(Scanner scanner) {
-        System.out.println("What would you like to do as administrator?");
-        System.out.println("1. Show all available resources in stock; \n" +
-                "2. Purchase resources. \n" +
-                "3. Back.");
-
+        boolean needToRepeat;
         int numberOfActionForAdmin = 0;
 
-        if (scanner.hasNextInt()) {
-            numberOfActionForAdmin = scanner.nextInt();
-            scanner.nextLine();
-        } else {
-            printAMessageAboutIncorrectInput();
-            scanner.nextLine();
-            runAsAdmin(scanner);
-        }
+        do {
+            needToRepeat = false;
+            System.out.println("What would you like to do as administrator?");
+            System.out.println("1. Show all available resources in stock; \n" +
+                    "2. Purchase resources. \n" +
+                    "3. Back.");
+
+            if (scanner.hasNextInt()) {
+                numberOfActionForAdmin = scanner.nextInt();
+                scanner.nextLine();
+            } else {
+                printAMessageAboutIncorrectInput();
+                scanner.nextLine();
+                needToRepeat = true;
+            }
+        } while (needToRepeat);
         return numberOfActionForAdmin;
     }
 
@@ -99,55 +107,66 @@ public class Application {
     }
 
     public static void processingAdminActions(int action, Scanner scanner) {
-        switch (action) {
-            case 1 -> {
-                printAllResource();
-                int newAction = runAsAdmin(scanner);
-                processingAdminActions(newAction, scanner);
-            }
-            case 2 -> {
-                purchaseResources(scanner);
-                int newAction = runAsAdmin(scanner);
-                processingAdminActions(newAction, scanner);
-            }
-            case 3 -> suggestAnAction(scanner);
-        }
+        boolean needToRepeat = true;
 
-        printAMessageAboutIncorrectInput();
+        do {
+            switch (action) {
+                case 1 -> {
+                    printAllResource();
+                    action = runAsAdmin(scanner);
+                }
+                case 2 -> {
+                    purchaseResources(scanner);
+                    action = runAsAdmin(scanner);
+                }
+                case 3 -> {
+                    suggestAnAction(scanner);
+                    needToRepeat = false;
+                }
+                default -> {
+                    printAMessageAboutIncorrectInput();
+                    action = runAsAdmin(scanner);
+                }
+            }
+        } while (needToRepeat);
     }
 
     public static void purchaseResources(Scanner scanner) {
-        int sumAtStorage = coffeeService.getSumProfit();
-        int minPriceForResource = ResourceType.getMinPrice();
+        boolean needToRepeat;
 
-        printAllResource();
+        do {
+            needToRepeat = false;
+            int sumAtStorage = coffeeService.getSumProfit();
+            int minPriceForResource = ResourceType.getMinPrice();
 
-        if (sumAtStorage > minPriceForResource) {
-            System.out.println("What resource needs to be purchased?");
+            printAllResource();
 
-            for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
-                ResourceType resource = ResourceType.getById(id);
-                if (coffeeService.hasResource(resource)) {
-                    System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
+            if (sumAtStorage > minPriceForResource) {
+                System.out.println("What resource needs to be purchased?");
+
+                for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
+                    ResourceType resource = ResourceType.getById(id);
+                    if (coffeeService.hasResource(resource)) {
+                        System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
+                    }
                 }
-            }
-            System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
-            int numberOfResource = inputValidationFrom1ToMaxId(scanner);
+                System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
+                int numberOfResource = inputValidationFrom1ToMaxId(scanner);
 
-            if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
-                boolean willBeEnoughMoney = coffeeService.canBuyResource(numberOfResource);
-                if (willBeEnoughMoney) {
-                    System.out.println("The resource has been purchased! \n");
+                if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
+                    if (coffeeService.canBuyResource(numberOfResource)) {
+                        System.out.println("The resource has been purchased! \n");
+                    } else {
+                        System.out.println("We have no money for this :( \n");
+                    }
+                    needToRepeat = true;
                 } else {
-                    System.out.println("We have no money for this :( \n");
+                    suggestAnAction(scanner);
                 }
-                purchaseResources(scanner);
             } else {
-                suggestAnAction(scanner);
+                System.out.println("We have no money for this :( \n");
             }
-        } else {
-            System.out.println("We have no money for this :( \n");
-        }
+        } while (needToRepeat);
     }
 
 
@@ -215,20 +234,25 @@ public class Application {
     }
 
     public static void confirmOrder(Scanner scanner) {
-        System.out.println("Confirm order? Yes/No");
-        String answer = scanner.nextLine();
+        boolean needToRepeat;
 
-        if (answer.equalsIgnoreCase("yes")) {
-            printCurrentOrderAndTotalAmount();
-            coffeeService.calculateRevenue();
-            System.out.println("The order is confirmed! \n");
+        do {
+            needToRepeat = false;
+            System.out.println("Confirm order? Yes/No");
+            String answer = scanner.nextLine();
 
-        } else if (answer.equalsIgnoreCase("no")) {
-            coffeeService.cancelTheOrder();
-            System.out.println("The order has been cancelled.");
-        } else {
-            System.out.println("Only \"yes\" or \"no\", please.");
-            confirmOrder(scanner);
-        }
+            if (answer.equalsIgnoreCase("yes")) {
+                printCurrentOrderAndTotalAmount();
+                coffeeService.calculateRevenue();
+                System.out.println("The order is confirmed! \n");
+
+            } else if (answer.equalsIgnoreCase("no")) {
+                coffeeService.cancelTheOrder();
+                System.out.println("The order has been cancelled.");
+            } else {
+                System.out.println("Only \"yes\" or \"no\", please.");
+                needToRepeat = true;
+            }
+        } while (needToRepeat);
     }
 }
