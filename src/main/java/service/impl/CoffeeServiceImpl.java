@@ -95,6 +95,6 @@ public class CoffeeServiceImpl implements CoffeeService {
         orderQuantityByType.clear();
         orderQuantityByType.put(ResourceType.COFFEE, 1);
 
-        totalOrderAmount = 10;
+        totalOrderAmount = ResourceType.COFFEE.getPrice();
     }
 }

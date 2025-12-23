@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Application {
     private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.getMAX_ID() + 1;
 
-    public static CoffeeService coffeeService = new CoffeeServiceImpl();
+    private static CoffeeService coffeeService = new CoffeeServiceImpl();
     private static boolean isThatNotAll = true;
 
 
@@ -31,7 +31,7 @@ public class Application {
         } while (isThatNotAll);
     }
 
-    public static void showAfterStartMenu(Scanner scanner) {
+    private static void showAfterStartMenu(Scanner scanner) {
         boolean needToRepeat;
         do {
             needToRepeat = false;
@@ -70,7 +70,7 @@ public class Application {
         } while (needToRepeat);
     }
 
-    public static void suggestExistResources() {
+    private static void suggestExistResources() {
         for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
             ResourceType resource = ResourceType.getById(id);
             if (coffeeService.hasResource(resource)) {
@@ -79,7 +79,7 @@ public class Application {
         }
     }
 
-    public static int runAsAdmin(Scanner scanner) {
+    private static int runAsAdmin(Scanner scanner) {
         boolean needToRepeat;
         int numberOfActionForAdmin = 0;
 
@@ -102,11 +102,11 @@ public class Application {
         return numberOfActionForAdmin;
     }
 
-    public static void printAMessageAboutIncorrectInput() {
+    private static void printAMessageAboutIncorrectInput() {
         System.out.println("Please, only the answers given." + "\n");
     }
 
-    public static void processingAdminActions(int action, Scanner scanner) {
+    private static void processingAdminActions(int action, Scanner scanner) {
         boolean needToRepeat = true;
 
         do {
@@ -131,7 +131,7 @@ public class Application {
         } while (needToRepeat);
     }
 
-    public static void purchaseResources(Scanner scanner) {
+    private static void purchaseResources(Scanner scanner) {
         boolean needToRepeat;
 
         do {
@@ -170,7 +170,7 @@ public class Application {
     }
 
 
-    public static int inputValidationFrom1ToMaxId(Scanner scanner) {
+    private static int inputValidationFrom1ToMaxId(Scanner scanner) {
         boolean isValid = false;
         int number = 0;
 
@@ -193,7 +193,7 @@ public class Application {
         return number;
     }
 
-    public static void suggestAnAction(Scanner scanner) {
+    private static void suggestAnAction(Scanner scanner) {
         System.out.println("What would you like to add to your order?");
         suggestExistResources();
         System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
@@ -233,7 +233,7 @@ public class Application {
         System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
     }
 
-    public static void confirmOrder(Scanner scanner) {
+    private static void confirmOrder(Scanner scanner) {
         boolean needToRepeat;
 
         do {
