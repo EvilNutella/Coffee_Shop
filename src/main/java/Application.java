@@ -2,6 +2,7 @@ import model.ResourceType;
 import service.CoffeeService;
 import service.impl.CoffeeServiceImpl;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -226,9 +227,10 @@ public class Application {
         Map<ResourceType, Integer> ResourceAtStorageQuantityByType = coffeeService.getAllResources();
 
         System.out.println("Currently at storage: \n");
-        ResourceAtStorageQuantityByType.forEach((resourceType, quantity) -> {
-            System.out.println(resourceType + " x " + quantity);
-        });
+
+        ResourceAtStorageQuantityByType.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
+                .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
 
         System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
     }
