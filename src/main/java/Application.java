@@ -18,6 +18,11 @@ public class Application {
         System.out.println("Welcome to our cafe!");
 
         do {
+            if (coffeeService.hasResource(ResourceType.COFFEE)) {
+                coffeeService.addResourceInOrder(ResourceType.COFFEE);
+            } else {
+                System.out.println("Sorry, we're out of coffee!");
+            }
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
@@ -206,7 +211,6 @@ public class Application {
         if (action < MAX_ID_OF_RESOURCES_PLUS_ONE) {
             coffeeService.addResourceInOrder(ResourceType.getById(action));
         } else {
-            isThatNotAll = false;
             printCurrentOrderAndTotalAmount();
             confirmOrder(scanner);
         }
@@ -228,7 +232,8 @@ public class Application {
 
         System.out.println("Currently at storage: \n");
 
-        ResourceAtStorageQuantityByType.entrySet().stream()
+        ResourceAtStorageQuantityByType.entrySet()
+                .stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
                 .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
 
@@ -247,6 +252,7 @@ public class Application {
                 printCurrentOrderAndTotalAmount();
                 coffeeService.calculateRevenue();
                 System.out.println("The order is confirmed! \n");
+                coffeeService.clearTheOrder();
 
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();

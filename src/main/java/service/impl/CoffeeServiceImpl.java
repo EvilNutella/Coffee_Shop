@@ -25,8 +25,6 @@ public class CoffeeServiceImpl implements CoffeeService {
                         Function.identity(),
                         type -> QUANTITY_OF_RESOURCES_AT_START
                 ));
-
-        addResourceInOrder(ResourceType.COFFEE);
     }
 
     public int getSumProfit() {
@@ -35,9 +33,8 @@ public class CoffeeServiceImpl implements CoffeeService {
 
     @Override
     public boolean hasResource(ResourceType resource) {
-        int currentQuantityInOrder = orderQuantityByType.getOrDefault(resource, 0);
         int currentQuantityAtStorage = storageQuantityByType.get(resource);
-        return currentQuantityInOrder <= currentQuantityAtStorage;
+        return currentQuantityAtStorage > 0;
     }
 
     @Override
@@ -86,14 +83,18 @@ public class CoffeeServiceImpl implements CoffeeService {
         return totalOrderAmount;
     }
 
+    public void clearTheOrder() {
+        orderQuantityByType.clear();
+        totalOrderAmount = 0;
+    }
+
     @Override
     public void cancelTheOrder() {
         orderQuantityByType.forEach((resourceType, quantity) -> {
             int quantityAtStorageAfterReturns = storageQuantityByType.get(resourceType) + quantity;
             storageQuantityByType.put(resourceType, quantityAtStorageAfterReturns);
         });
-        orderQuantityByType.clear();
-        orderQuantityByType.put(ResourceType.COFFEE, 1);
+        clearTheOrder();
 
         totalOrderAmount = ResourceType.COFFEE.getPrice();
     }
