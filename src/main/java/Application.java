@@ -16,6 +16,7 @@ public class Application {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to our cafe!");
+        addFirstCoffeeInOrder();
 
         do {
             printCurrentOrderAndTotalAmount();
@@ -30,6 +31,16 @@ public class Application {
                 printAMessageAboutIncorrectInput();
             }
         } while (isThatNotAll);
+    }
+
+    private static void addFirstCoffeeInOrder() {
+        if (!coffeeService.isFirstCoffeeInOrderAlreadyExist()) {
+            if (coffeeService.hasResource(ResourceType.COFFEE)) {
+                coffeeService.addResourceInOrder(ResourceType.COFFEE);
+            } else {
+                System.out.println("Sorry, we're out of coffee!");
+            }
+        }
     }
 
     private static void showAfterStartMenu(Scanner scanner) {
@@ -206,7 +217,6 @@ public class Application {
         if (action < MAX_ID_OF_RESOURCES_PLUS_ONE) {
             coffeeService.addResourceInOrder(ResourceType.getById(action));
         } else {
-            isThatNotAll = false;
             printCurrentOrderAndTotalAmount();
             confirmOrder(scanner);
         }
@@ -228,7 +238,8 @@ public class Application {
 
         System.out.println("Currently at storage: \n");
 
-        ResourceAtStorageQuantityByType.entrySet().stream()
+        ResourceAtStorageQuantityByType.entrySet()
+                .stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
                 .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
 
@@ -246,11 +257,16 @@ public class Application {
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
                 coffeeService.calculateRevenue();
+                coffeeService.clearTheOrder();
                 System.out.println("The order is confirmed! \n");
+
+                addFirstCoffeeInOrder();
 
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();
                 System.out.println("The order has been cancelled.");
+
+                addFirstCoffeeInOrder();
             } else {
                 System.out.println("Only \"yes\" or \"no\", please.");
                 needToRepeat = true;

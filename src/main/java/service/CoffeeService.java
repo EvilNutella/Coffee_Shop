@@ -13,6 +13,8 @@ public interface CoffeeService {
     void cancelTheOrder();
     boolean hasResource(ResourceType resource);
     boolean canBuyResource(int id);
+    void clearTheOrder();
+    boolean isFirstCoffeeInOrderAlreadyExist();
 
     int getSumProfit();
 }
