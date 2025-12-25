@@ -63,6 +63,11 @@ public class CoffeeServiceImpl implements CoffeeService {
         }
     }
 
+
+    public boolean isFirstCoffeeInOrderAlreadyExist() {
+        return orderQuantityByType.getOrDefault(ResourceType.COFFEE, 0) > 0;
+    }
+
     @Override
     public Map<ResourceType, Integer> getCurrentOrder() {
         return Map.copyOf(orderQuantityByType);
@@ -95,7 +100,5 @@ public class CoffeeServiceImpl implements CoffeeService {
             storageQuantityByType.put(resourceType, quantityAtStorageAfterReturns);
         });
         clearTheOrder();
-
-        totalOrderAmount = ResourceType.COFFEE.getPrice();
     }
 }

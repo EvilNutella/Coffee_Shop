@@ -16,13 +16,9 @@ public class Application {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to our cafe!");
+        addFirstCoffeeInOrder();
 
         do {
-            if (coffeeService.hasResource(ResourceType.COFFEE)) {
-                coffeeService.addResourceInOrder(ResourceType.COFFEE);
-            } else {
-                System.out.println("Sorry, we're out of coffee!");
-            }
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
@@ -35,6 +31,16 @@ public class Application {
                 printAMessageAboutIncorrectInput();
             }
         } while (isThatNotAll);
+    }
+
+    private static void addFirstCoffeeInOrder() {
+        if (!coffeeService.isFirstCoffeeInOrderAlreadyExist()) {
+            if (coffeeService.hasResource(ResourceType.COFFEE)) {
+                coffeeService.addResourceInOrder(ResourceType.COFFEE);
+            } else {
+                System.out.println("Sorry, we're out of coffee!");
+            }
+        }
     }
 
     private static void showAfterStartMenu(Scanner scanner) {
@@ -251,12 +257,16 @@ public class Application {
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
                 coffeeService.calculateRevenue();
-                System.out.println("The order is confirmed! \n");
                 coffeeService.clearTheOrder();
+                System.out.println("The order is confirmed! \n");
+
+                addFirstCoffeeInOrder();
 
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();
                 System.out.println("The order has been cancelled.");
+
+                addFirstCoffeeInOrder();
             } else {
                 System.out.println("Only \"yes\" or \"no\", please.");
                 needToRepeat = true;
