@@ -11,16 +11,23 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public enum ResourceType {
-    COFFEE(1, 10, "Coffee"),
-    SUGAR(2, 2, "Sugar"),
-    SYRUP(3, 3, "Syrup"),
-    DONUT(4, 4, "Donut");
+    COFFEE(1, 10, "Coffee", true),
+    SUGAR(2, 2, "Sugar", false),
+    SYRUP(3, 3, "Syrup", false),
+    DONUT(4, 4, "Donut", false);
 
     private static final Map<Integer, ResourceType> RESOURCE_BY_ID =
             Arrays.stream(ResourceType.values())
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(resource -> resource.id, resource -> resource),
                             Collections::unmodifiableMap));
+
+    private static final Map<ResourceType, Boolean> REQUIRED_BY_RESOURCE =
+            Arrays.stream(ResourceType.values())
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toMap(resource -> resource, ResourceType::isRequired),
+                            Collections::unmodifiableMap
+                    ));
 
     private static final int MAX_ID =
             Arrays.stream(ResourceType.values())
@@ -37,6 +44,7 @@ public enum ResourceType {
     private final int id;
     private final int price;
     private final String displayName;
+    private final boolean isRequired;
 
     public static int getMAX_ID() {
         return MAX_ID;
@@ -53,6 +61,7 @@ public enum ResourceType {
     public static ResourceType getById(int id) {
         return RESOURCE_BY_ID.get(id);
     }
+    public static Map<ResourceType, Boolean> getRequiredResources() {return REQUIRED_BY_RESOURCE;}
 
 }
 
