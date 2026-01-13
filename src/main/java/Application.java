@@ -16,7 +16,7 @@ public class Application {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to our cafe!");
-        addFirstCoffeeInOrder();
+        addRequiredResourcesInOrder();
 
         do {
             printCurrentOrderAndTotalAmount();
@@ -33,8 +33,8 @@ public class Application {
         } while (isThatNotAll);
     }
 
-    private static void addFirstCoffeeInOrder() {
-        if (!coffeeService.isFirstCoffeeInOrderAlreadyExist()) {
+    private static void addRequiredResourcesInOrder() {
+        if (!coffeeService.areAllRequiredResourcesInOrder()) {
             if (coffeeService.hasResource(ResourceType.COFFEE)) {
                 coffeeService.addResourceInOrder(ResourceType.COFFEE);
             } else {
@@ -260,13 +260,13 @@ public class Application {
                 coffeeService.clearTheOrder();
                 System.out.println("The order is confirmed! \n");
 
-                addFirstCoffeeInOrder();
+                addRequiredResourcesInOrder();
 
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();
                 System.out.println("The order has been cancelled.");
 
-                addFirstCoffeeInOrder();
+                addRequiredResourcesInOrder();
             } else {
                 System.out.println("Only \"yes\" or \"no\", please.");
                 needToRepeat = true;

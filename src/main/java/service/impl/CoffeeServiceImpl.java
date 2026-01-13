@@ -63,9 +63,16 @@ public class CoffeeServiceImpl implements CoffeeService {
         }
     }
 
+    @Override
+    public boolean areAllRequiredResourcesInOrder() {
+        Map<ResourceType, Boolean> requiredResources = ResourceType.getRequiredResources();
 
-    public boolean isFirstCoffeeInOrderAlreadyExist() {
-        return orderQuantityByType.getOrDefault(ResourceType.COFFEE, 0) > 0;
+        return requiredResources.keySet()
+                .stream()
+                .allMatch(resourceType ->
+                        orderQuantityByType.containsKey(resourceType) &&
+                                orderQuantityByType.get(resourceType) > 0
+                );
     }
 
     @Override
