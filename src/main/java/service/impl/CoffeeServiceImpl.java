@@ -5,6 +5,7 @@ import service.CoffeeService;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,12 +41,12 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public boolean canBuyResource(int id) {
         ResourceType resource = ResourceType.getById(id);
-        boolean wasResourcePurchased = sumProfit > resource.getPrice();
+        boolean wasResourcePurchased = sumProfit > resource.getPRICE();
 
         if (wasResourcePurchased) {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
-            sumProfit -= resource.getPrice();
+            sumProfit -= resource.getPRICE();
         }
         return wasResourcePurchased;
     }
@@ -59,20 +60,23 @@ public class CoffeeServiceImpl implements CoffeeService {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage - 1);
 
-            totalOrderAmount += resource.getPrice();
+            totalOrderAmount += resource.getPRICE();
         }
     }
 
     @Override
     public boolean areAllRequiredResourcesInOrder() {
-        Map<ResourceType, Boolean> requiredResources = ResourceType.getRequiredResources();
+        return getMissingRequiredResources().isEmpty();
+    }
 
-        return requiredResources.keySet()
+    @Override
+    public List<ResourceType> getMissingRequiredResources() {
+        return ResourceType.REQUIRED_RESOURCES
                 .stream()
-                .allMatch(resourceType ->
-                        orderQuantityByType.containsKey(resourceType) &&
-                                orderQuantityByType.get(resourceType) > 0
-                );
+                .filter(resourceType ->
+                        orderQuantityByType.getOrDefault(resourceType, 0) <= 0
+                )
+                .toList();
     }
 
     @Override

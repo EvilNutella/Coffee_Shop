@@ -2,6 +2,7 @@ package service;
 
 import model.ResourceType;
 
+import java.util.List;
 import java.util.Map;
 
 public interface CoffeeService {
@@ -15,5 +16,6 @@ public interface CoffeeService {
     boolean canBuyResource(int id);
     void clearTheOrder();
     boolean areAllRequiredResourcesInOrder();
+    List<ResourceType> getMissingRequiredResources();
     int getSumProfit();
 }

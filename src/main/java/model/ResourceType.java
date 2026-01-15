@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,52 +17,41 @@ public enum ResourceType {
     SYRUP(3, 3, "Syrup", false),
     DONUT(4, 4, "Donut", false);
 
-    private static final Map<Integer, ResourceType> RESOURCE_BY_ID =
+    public static final Map<Integer, ResourceType> RESOURCE_BY_ID =
             Arrays.stream(ResourceType.values())
                     .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(resource -> resource.id, resource -> resource),
+                            Collectors.toMap(resource -> resource.ID, resource -> resource),
                             Collections::unmodifiableMap));
 
-    private static final Map<ResourceType, Boolean> REQUIRED_BY_RESOURCE =
+    public static final List<ResourceType> REQUIRED_RESOURCES =
             Arrays.stream(ResourceType.values())
-                    .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(resource -> resource, ResourceType::isRequired),
-                            Collections::unmodifiableMap
-                    ));
+                    .filter(ResourceType::isIS_REQUIRED)
+                    .toList();
 
-    private static final int MAX_ID =
+    public static final int MAX_ID =
             Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getId)
+                    .mapToInt(ResourceType::getID)
                     .max()
                     .orElse(0);
 
-    private static final int MIN_PRICE =
+    public static final int MIN_PRICE =
             Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getPrice)
+                    .mapToInt(ResourceType::getPRICE)
                     .min()
                     .orElse(0);
 
-    private final int id;
-    private final int price;
-    private final String displayName;
-    private final boolean isRequired;
-
-    public static int getMAX_ID() {
-        return MAX_ID;
-    }
-
-    public static int getMinPrice() {
-        return MIN_PRICE;
-    }
+    private final int ID;
+    private final int PRICE;
+    public final String DISPLAY_NAME;
+    private final boolean IS_REQUIRED;
 
     public String toString() {
-        return id + ". " + displayName + " " + price + "$";
+        return ID + ". " + DISPLAY_NAME + " " + PRICE + "$";
     }
 
     public static ResourceType getById(int id) {
         return RESOURCE_BY_ID.get(id);
     }
-    public static Map<ResourceType, Boolean> getRequiredResources() {return REQUIRED_BY_RESOURCE;}
 
 }
 
