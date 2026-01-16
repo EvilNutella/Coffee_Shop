@@ -92,6 +92,7 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public void calculateRevenue() {
         sumProfit += totalOrderAmount;
+        clearTheOrder();
     }
 
     @Override

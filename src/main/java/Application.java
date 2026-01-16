@@ -262,7 +262,6 @@ public class Application {
                 printCurrentOrderAndTotalAmount();
                 coffeeService.calculateRevenue();
                 System.out.println("The order is confirmed! \n");
-                coffeeService.clearTheOrder();
 
                 addMissingRequiredResources();
 
