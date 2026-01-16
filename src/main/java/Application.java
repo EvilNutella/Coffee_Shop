@@ -40,7 +40,7 @@ public class Application {
                         if (coffeeService.hasResource(resource)) {
                             coffeeService.addResourceInOrder(resource);
                         } else {
-                            System.out.println("Sorry, we're out of " + resource.displayName
+                            System.out.println("Sorry, we're out of " + resource.getDisplayName()
                                     .toLowerCase() + "!");
                         }
                     });

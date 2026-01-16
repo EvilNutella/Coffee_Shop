@@ -42,7 +42,8 @@ public enum ResourceType {
 
     private final int id;
     private final int price;
-    public final String displayName;
+    @Getter
+    private final String displayName;
     private final boolean isRequired;
 
     public String toString() {
