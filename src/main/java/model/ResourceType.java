@@ -20,33 +20,33 @@ public enum ResourceType {
     public static final Map<Integer, ResourceType> RESOURCE_BY_ID =
             Arrays.stream(ResourceType.values())
                     .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(resource -> resource.ID, resource -> resource),
+                            Collectors.toMap(resource -> resource.id, resource -> resource),
                             Collections::unmodifiableMap));
 
     public static final List<ResourceType> REQUIRED_RESOURCES =
             Arrays.stream(ResourceType.values())
-                    .filter(ResourceType::isIS_REQUIRED)
+                    .filter(ResourceType::isRequired)
                     .toList();
 
     public static final int MAX_ID =
             Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getID)
+                    .mapToInt(ResourceType::getId)
                     .max()
                     .orElse(0);
 
     public static final int MIN_PRICE =
             Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getPRICE)
+                    .mapToInt(ResourceType::getPrice)
                     .min()
                     .orElse(0);
 
-    private final int ID;
-    private final int PRICE;
-    public final String DISPLAY_NAME;
-    private final boolean IS_REQUIRED;
+    private final int id;
+    private final int price;
+    public final String displayName;
+    private final boolean isRequired;
 
     public String toString() {
-        return ID + ". " + DISPLAY_NAME + " " + PRICE + "$";
+        return id + ". " + displayName + " " + price + "$";
     }
 
     public static ResourceType getById(int id) {

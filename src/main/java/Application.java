@@ -40,7 +40,7 @@ public class Application {
                         if (coffeeService.hasResource(resource)) {
                             coffeeService.addResourceInOrder(resource);
                         } else {
-                            System.out.println("Sorry, we're out of " + resource.DISPLAY_NAME
+                            System.out.println("Sorry, we're out of " + resource.displayName
                                     .toLowerCase() + "!");
                         }
                     });
@@ -163,7 +163,7 @@ public class Application {
                 for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
                     ResourceType resource = ResourceType.getById(id);
                     if (coffeeService.hasResource(resource)) {
-                        System.out.println(resource + ", purchase price: " + (resource.getPRICE() - 1) + "$");
+                        System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
                     }
                 }
                 System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
@@ -244,7 +244,7 @@ public class Application {
 
         ResourceAtStorageQuantityByType.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getID)))
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
                 .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
 
         System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");

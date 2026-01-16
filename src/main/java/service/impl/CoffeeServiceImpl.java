@@ -41,12 +41,12 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public boolean canBuyResource(int id) {
         ResourceType resource = ResourceType.getById(id);
-        boolean wasResourcePurchased = sumProfit > resource.getPRICE();
+        boolean wasResourcePurchased = sumProfit > resource.getPrice();
 
         if (wasResourcePurchased) {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage + 1);
-            sumProfit -= resource.getPRICE();
+            sumProfit -= resource.getPrice();
         }
         return wasResourcePurchased;
     }
@@ -60,7 +60,7 @@ public class CoffeeServiceImpl implements CoffeeService {
             int currentQuantityAtStorage = storageQuantityByType.getOrDefault(resource, 0);
             storageQuantityByType.put(resource, currentQuantityAtStorage - 1);
 
-            totalOrderAmount += resource.getPRICE();
+            totalOrderAmount += resource.getPrice();
         }
     }
 
