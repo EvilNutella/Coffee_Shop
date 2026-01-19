@@ -5,30 +5,36 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
 public enum ResourceType {
-    COFFEE(1, 10, "Coffee"),
-    SUGAR(2, 2, "Sugar"),
-    SYRUP(3, 3, "Syrup"),
-    DONUT(4, 4, "Donut");
+    COFFEE(1, 10, "Coffee", true),
+    SUGAR(2, 2, "Sugar", false),
+    SYRUP(3, 3, "Syrup", false),
+    DONUT(4, 4, "Donut", false);
 
-    private static final Map<Integer, ResourceType> RESOURCE_BY_ID =
+    public static final Map<Integer, ResourceType> RESOURCE_BY_ID =
             Arrays.stream(ResourceType.values())
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(resource -> resource.id, resource -> resource),
                             Collections::unmodifiableMap));
 
-    private static final int MAX_ID =
+    public static final List<ResourceType> REQUIRED_RESOURCES =
+            Arrays.stream(ResourceType.values())
+                    .filter(ResourceType::isRequired)
+                    .toList();
+
+    public static final int MAX_ID =
             Arrays.stream(ResourceType.values())
                     .mapToInt(ResourceType::getId)
                     .max()
                     .orElse(0);
 
-    private static final int MIN_PRICE =
+    public static final int MIN_PRICE =
             Arrays.stream(ResourceType.values())
                     .mapToInt(ResourceType::getPrice)
                     .min()
@@ -37,14 +43,7 @@ public enum ResourceType {
     private final int id;
     private final int price;
     private final String displayName;
-
-    public static int getMAX_ID() {
-        return MAX_ID;
-    }
-
-    public static int getMinPrice() {
-        return MIN_PRICE;
-    }
+    private final boolean isRequired;
 
     public String toString() {
         return id + ". " + displayName + " " + price + "$";

@@ -3,11 +3,12 @@ import service.CoffeeService;
 import service.impl.CoffeeServiceImpl;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Application {
-    private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.getMAX_ID() + 1;
+    private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.MAX_ID + 1;
 
     private static CoffeeService coffeeService = new CoffeeServiceImpl();
     private static boolean isThatNotAll = true;
@@ -16,6 +17,7 @@ public class Application {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to our cafe!");
+        addMissingRequiredResources();
 
         do {
             printCurrentOrderAndTotalAmount();
@@ -30,6 +32,19 @@ public class Application {
                 printAMessageAboutIncorrectInput();
             }
         } while (isThatNotAll);
+    }
+
+    private static void addMissingRequiredResources() {
+        coffeeService.getMissingRequiredResources()
+                .forEach(resource -> {
+                    if (coffeeService.hasResource(resource)) {
+                        coffeeService.addResourceInOrder(resource);
+                    } else {
+                        System.out.println("Sorry, we're out of " + resource.getDisplayName()
+                                .toLowerCase() + "!");
+                    }
+                });
+
     }
 
     private static void showAfterStartMenu(Scanner scanner) {
@@ -138,7 +153,7 @@ public class Application {
         do {
             needToRepeat = false;
             int sumAtStorage = coffeeService.getSumProfit();
-            int minPriceForResource = ResourceType.getMinPrice();
+            int minPriceForResource = ResourceType.MIN_PRICE;
 
             printAllResource();
 
@@ -206,7 +221,6 @@ public class Application {
         if (action < MAX_ID_OF_RESOURCES_PLUS_ONE) {
             coffeeService.addResourceInOrder(ResourceType.getById(action));
         } else {
-            isThatNotAll = false;
             printCurrentOrderAndTotalAmount();
             confirmOrder(scanner);
         }
@@ -228,7 +242,8 @@ public class Application {
 
         System.out.println("Currently at storage: \n");
 
-        ResourceAtStorageQuantityByType.entrySet().stream()
+        ResourceAtStorageQuantityByType.entrySet()
+                .stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
                 .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
 
@@ -248,9 +263,13 @@ public class Application {
                 coffeeService.calculateRevenue();
                 System.out.println("The order is confirmed! \n");
 
+                addMissingRequiredResources();
+
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();
                 System.out.println("The order has been cancelled.");
+
+                addMissingRequiredResources();
             } else {
                 System.out.println("Only \"yes\" or \"no\", please.");
                 needToRepeat = true;

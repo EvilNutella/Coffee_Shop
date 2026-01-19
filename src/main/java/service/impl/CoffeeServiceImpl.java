@@ -5,6 +5,7 @@ import service.CoffeeService;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,8 +26,6 @@ public class CoffeeServiceImpl implements CoffeeService {
                         Function.identity(),
                         type -> QUANTITY_OF_RESOURCES_AT_START
                 ));
-
-        addResourceInOrder(ResourceType.COFFEE);
     }
 
     public int getSumProfit() {
@@ -35,9 +34,8 @@ public class CoffeeServiceImpl implements CoffeeService {
 
     @Override
     public boolean hasResource(ResourceType resource) {
-        int currentQuantityInOrder = orderQuantityByType.getOrDefault(resource, 0);
         int currentQuantityAtStorage = storageQuantityByType.get(resource);
-        return currentQuantityInOrder <= currentQuantityAtStorage;
+        return currentQuantityAtStorage > 0;
     }
 
     @Override
@@ -67,6 +65,14 @@ public class CoffeeServiceImpl implements CoffeeService {
     }
 
     @Override
+    public List<ResourceType> getMissingRequiredResources() {
+        return ResourceType.REQUIRED_RESOURCES
+                .stream()
+                .filter(resourceType -> orderQuantityByType.getOrDefault(resourceType, 0) <= 0)
+                .toList();
+    }
+
+    @Override
     public Map<ResourceType, Integer> getCurrentOrder() {
         return Map.copyOf(orderQuantityByType);
     }
@@ -79,11 +85,17 @@ public class CoffeeServiceImpl implements CoffeeService {
     @Override
     public void calculateRevenue() {
         sumProfit += totalOrderAmount;
+        clearTheOrder();
     }
 
     @Override
     public int getTotalOrderAmount() {
         return totalOrderAmount;
+    }
+
+    private void clearTheOrder() {
+        orderQuantityByType.clear();
+        totalOrderAmount = 0;
     }
 
     @Override
@@ -92,9 +104,6 @@ public class CoffeeServiceImpl implements CoffeeService {
             int quantityAtStorageAfterReturns = storageQuantityByType.get(resourceType) + quantity;
             storageQuantityByType.put(resourceType, quantityAtStorageAfterReturns);
         });
-        orderQuantityByType.clear();
-        orderQuantityByType.put(ResourceType.COFFEE, 1);
-
-        totalOrderAmount = ResourceType.COFFEE.getPrice();
+        clearTheOrder();
     }
 }
