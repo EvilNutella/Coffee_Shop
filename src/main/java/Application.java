@@ -35,19 +35,16 @@ public class Application {
     }
 
     private static void addMissingRequiredResources() {
-        List<ResourceType> missingResources = coffeeService.getMissingRequiredResources();
+        coffeeService.getMissingRequiredResources()
+                .forEach(resource -> {
+                    if (coffeeService.hasResource(resource)) {
+                        coffeeService.addResourceInOrder(resource);
+                    } else {
+                        System.out.println("Sorry, we're out of " + resource.getDisplayName()
+                                .toLowerCase() + "!");
+                    }
+                });
 
-        if (!missingResources.isEmpty()) {
-            missingResources
-                    .forEach(resource -> {
-                        if (coffeeService.hasResource(resource)) {
-                            coffeeService.addResourceInOrder(resource);
-                        } else {
-                            System.out.println("Sorry, we're out of " + resource.getDisplayName()
-                                    .toLowerCase() + "!");
-                        }
-                    });
-        }
     }
 
     private static void showAfterStartMenu(Scanner scanner) {

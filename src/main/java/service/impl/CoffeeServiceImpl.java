@@ -93,7 +93,7 @@ public class CoffeeServiceImpl implements CoffeeService {
         return totalOrderAmount;
     }
 
-    public void clearTheOrder() {
+    private void clearTheOrder() {
         orderQuantityByType.clear();
         totalOrderAmount = 0;
     }
