@@ -15,7 +15,6 @@ public interface CoffeeService {
     boolean hasResource(ResourceType resource);
     boolean canBuyResource(int id);
     void clearTheOrder();
-    boolean areAllRequiredResourcesInOrder();
     List<ResourceType> getMissingRequiredResources();
     int getSumProfit();
 }

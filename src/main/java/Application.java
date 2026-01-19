@@ -3,6 +3,7 @@ import service.CoffeeService;
 import service.impl.CoffeeServiceImpl;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -34,8 +35,10 @@ public class Application {
     }
 
     private static void addMissingRequiredResources() {
-        if (!coffeeService.areAllRequiredResourcesInOrder()) {
-            coffeeService.getMissingRequiredResources()
+        List<ResourceType> missingResources = coffeeService.getMissingRequiredResources();
+
+        if (!missingResources.isEmpty()) {
+            missingResources
                     .forEach(resource -> {
                         if (coffeeService.hasResource(resource)) {
                             coffeeService.addResourceInOrder(resource);

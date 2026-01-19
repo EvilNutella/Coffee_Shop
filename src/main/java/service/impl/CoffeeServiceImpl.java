@@ -65,17 +65,10 @@ public class CoffeeServiceImpl implements CoffeeService {
     }
 
     @Override
-    public boolean areAllRequiredResourcesInOrder() {
-        return getMissingRequiredResources().isEmpty();
-    }
-
-    @Override
     public List<ResourceType> getMissingRequiredResources() {
         return ResourceType.REQUIRED_RESOURCES
                 .stream()
-                .filter(resourceType ->
-                        orderQuantityByType.getOrDefault(resourceType, 0) <= 0
-                )
+                .filter(resourceType -> orderQuantityByType.getOrDefault(resourceType, 0) <= 0)
                 .toList();
     }
 
