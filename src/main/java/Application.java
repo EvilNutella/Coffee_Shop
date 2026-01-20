@@ -3,7 +3,6 @@ import service.CoffeeService;
 import service.impl.CoffeeServiceImpl;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -24,6 +23,8 @@ public class Application {
             System.out.println("Would you like to add something in order? Yes/No");
 
             String userInput = scanner.nextLine();
+            System.out.println(); // Пустая строка после ввода
+
             if (userInput.equalsIgnoreCase("Yes")) {
                 suggestAnAction(scanner);
             } else if (userInput.equalsIgnoreCase("No")) {
@@ -59,6 +60,7 @@ public class Application {
             if (scanner.hasNextInt()) {
                 int numberOfAction = scanner.nextInt();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
 
                 switch (numberOfAction) {
                     case 1 -> {
@@ -81,6 +83,7 @@ public class Application {
             } else {
                 printAMessageAboutIncorrectInput();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -109,9 +112,11 @@ public class Application {
             if (scanner.hasNextInt()) {
                 numberOfActionForAdmin = scanner.nextInt();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
             } else {
                 printAMessageAboutIncorrectInput();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -194,6 +199,7 @@ public class Application {
             if (scanner.hasNextInt()) {
                 number = scanner.nextInt();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
 
                 if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     isValid = true;
@@ -203,6 +209,7 @@ public class Application {
             } else {
                 printAMessageAboutIncorrectInput();
                 scanner.nextLine();
+                System.out.println(); // Пустая строка после ввода
             }
         }
 
@@ -228,7 +235,7 @@ public class Application {
 
     private static void printCurrentOrderAndTotalAmount() {
         Map<ResourceType, Integer> currentOrderQuantityByType = coffeeService.getCurrentOrder();
-        System.out.println("Currently on order: \n");
+        System.out.println("Currently on order: ");
 
         currentOrderQuantityByType.forEach((resourceType, integer) -> {
             System.out.println(resourceType + " x " + integer);
@@ -240,7 +247,7 @@ public class Application {
     private static void printAllResource() {
         Map<ResourceType, Integer> ResourceAtStorageQuantityByType = coffeeService.getAllResources();
 
-        System.out.println("Currently at storage: \n");
+        System.out.println("Currently at storage: ");
 
         ResourceAtStorageQuantityByType.entrySet()
                 .stream()
@@ -257,6 +264,7 @@ public class Application {
             needToRepeat = false;
             System.out.println("Confirm order? Yes/No");
             String answer = scanner.nextLine();
+            System.out.println(); // Пустая строка после ввода
 
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
