@@ -23,7 +23,7 @@ public class Application {
             System.out.println("Would you like to add something in order? Yes/No");
 
             String userInput = scanner.nextLine();
-            System.out.println(); // Пустая строка после ввода
+            System.out.println();
 
             if (userInput.equalsIgnoreCase("Yes")) {
                 suggestAnAction(scanner);
@@ -48,6 +48,11 @@ public class Application {
 
     }
 
+    private static void printLineAfterUserInput(Scanner scanner) {
+        scanner.nextLine();
+        System.out.println();
+    }
+
     private static void showAfterStartMenu(Scanner scanner) {
         boolean needToRepeat;
         do {
@@ -59,8 +64,7 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 int numberOfAction = scanner.nextInt();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
 
                 switch (numberOfAction) {
                     case 1 -> {
@@ -82,8 +86,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -111,12 +114,10 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 numberOfActionForAdmin = scanner.nextInt();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -198,8 +199,7 @@ public class Application {
         while (!isValid) {
             if (scanner.hasNextInt()) {
                 number = scanner.nextInt();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
 
                 if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     isValid = true;
@@ -208,8 +208,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
-                System.out.println(); // Пустая строка после ввода
+                printLineAfterUserInput(scanner);
             }
         }
 
@@ -264,7 +263,7 @@ public class Application {
             needToRepeat = false;
             System.out.println("Confirm order? Yes/No");
             String answer = scanner.nextLine();
-            System.out.println(); // Пустая строка после ввода
+            System.out.println();
 
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
