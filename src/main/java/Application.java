@@ -22,7 +22,7 @@ public class Application {
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
-            String userInput = processingUserInput(scanner);
+            String userInput = getUserInput(scanner);
 
             if (userInput.equalsIgnoreCase("Yes")) {
                 suggestAnAction(scanner);
@@ -47,7 +47,7 @@ public class Application {
 
     }
 
-    private static String processingUserInput(Scanner scanner) {
+    private static String getUserInput(Scanner scanner) {
         String userInput = scanner.nextLine();
         System.out.println();
         return userInput;
@@ -64,7 +64,7 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 int numberOfAction = scanner.nextInt();
-                processingUserInput(scanner);
+                getUserInput(scanner);
 
                 switch (numberOfAction) {
                     case 1 -> {
@@ -86,7 +86,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                processingUserInput(scanner);
+                getUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -114,10 +114,10 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 numberOfActionForAdmin = scanner.nextInt();
-                processingUserInput(scanner);
+                getUserInput(scanner);
             } else {
                 printAMessageAboutIncorrectInput();
-                processingUserInput(scanner);
+                getUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -199,7 +199,7 @@ public class Application {
         while (!isValid) {
             if (scanner.hasNextInt()) {
                 number = scanner.nextInt();
-                processingUserInput(scanner);
+                getUserInput(scanner);
 
                 if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     isValid = true;
@@ -208,7 +208,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                processingUserInput(scanner);
+                getUserInput(scanner);
             }
         }
 
@@ -262,7 +262,7 @@ public class Application {
         do {
             needToRepeat = false;
             System.out.println("Confirm order? Yes/No");
-            String answer = processingUserInput(scanner);
+            String answer = getUserInput(scanner);
 
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
