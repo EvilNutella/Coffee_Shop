@@ -234,24 +234,25 @@ public class Application {
 
     private static void printCurrentOrderAndTotalAmount() {
         Map<ResourceType, Integer> currentOrderQuantityByType = coffeeService.getCurrentOrder();
-        System.out.println("Currently on order: ");
 
-        currentOrderQuantityByType.forEach((resourceType, integer) -> {
-            System.out.println(resourceType + " x " + integer);
-        });
+        System.out.println("Currently on order: ");
+        printListOfResource(currentOrderQuantityByType);
 
         System.out.println("Total: " + coffeeService.getTotalOrderAmount() + " $");
+    }
+
+    private static void printListOfResource(Map<ResourceType, Integer> resourcesQuantityByType) {
+        resourcesQuantityByType.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
+                .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
     }
 
     private static void printAllResource() {
         Map<ResourceType, Integer> ResourceAtStorageQuantityByType = coffeeService.getAllResources();
 
         System.out.println("Currently at storage: ");
-
-        ResourceAtStorageQuantityByType.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
-                .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
+        printListOfResource(ResourceAtStorageQuantityByType);
 
         System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
     }
