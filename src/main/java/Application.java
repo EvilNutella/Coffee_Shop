@@ -3,7 +3,6 @@ import service.CoffeeService;
 import service.impl.CoffeeServiceImpl;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -23,7 +22,8 @@ public class Application {
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
 
-            String userInput = scanner.nextLine();
+            String userInput = getUserInput(scanner);
+
             if (userInput.equalsIgnoreCase("Yes")) {
                 suggestAnAction(scanner);
             } else if (userInput.equalsIgnoreCase("No")) {
@@ -47,6 +47,12 @@ public class Application {
 
     }
 
+    private static String getUserInput(Scanner scanner) {
+        String userInput = scanner.nextLine();
+        System.out.println();
+        return userInput;
+    }
+
     private static void showAfterStartMenu(Scanner scanner) {
         boolean needToRepeat;
         do {
@@ -58,7 +64,7 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 int numberOfAction = scanner.nextInt();
-                scanner.nextLine();
+                getUserInput(scanner);
 
                 switch (numberOfAction) {
                     case 1 -> {
@@ -80,7 +86,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
+                getUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -108,10 +114,10 @@ public class Application {
 
             if (scanner.hasNextInt()) {
                 numberOfActionForAdmin = scanner.nextInt();
-                scanner.nextLine();
+                getUserInput(scanner);
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
+                getUserInput(scanner);
                 needToRepeat = true;
             }
         } while (needToRepeat);
@@ -193,7 +199,7 @@ public class Application {
         while (!isValid) {
             if (scanner.hasNextInt()) {
                 number = scanner.nextInt();
-                scanner.nextLine();
+                getUserInput(scanner);
 
                 if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     isValid = true;
@@ -202,7 +208,7 @@ public class Application {
                 }
             } else {
                 printAMessageAboutIncorrectInput();
-                scanner.nextLine();
+                getUserInput(scanner);
             }
         }
 
@@ -228,7 +234,7 @@ public class Application {
 
     private static void printCurrentOrderAndTotalAmount() {
         Map<ResourceType, Integer> currentOrderQuantityByType = coffeeService.getCurrentOrder();
-        System.out.println("Currently on order: \n");
+        System.out.println("Currently on order: ");
 
         currentOrderQuantityByType.forEach((resourceType, integer) -> {
             System.out.println(resourceType + " x " + integer);
@@ -240,7 +246,7 @@ public class Application {
     private static void printAllResource() {
         Map<ResourceType, Integer> ResourceAtStorageQuantityByType = coffeeService.getAllResources();
 
-        System.out.println("Currently at storage: \n");
+        System.out.println("Currently at storage: ");
 
         ResourceAtStorageQuantityByType.entrySet()
                 .stream()
@@ -256,7 +262,7 @@ public class Application {
         do {
             needToRepeat = false;
             System.out.println("Confirm order? Yes/No");
-            String answer = scanner.nextLine();
+            String answer = getUserInput(scanner);
 
             if (answer.equalsIgnoreCase("yes")) {
                 printCurrentOrderAndTotalAmount();
