@@ -159,11 +159,11 @@ public class Application {
         do {
             needToRepeat = false;
             int sumAtStorage = coffeeService.getSumProfit();
-            int minPriceForResource = ResourceType.MIN_PRICE;
+            int minPurchasePrice = ResourceType.MIN_PRICE - 1;
 
             printAllResource();
 
-            if (sumAtStorage > minPriceForResource) {
+            if (sumAtStorage >= minPurchasePrice) {
                 System.out.println("What resource needs to be purchased?");
 
                 for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
