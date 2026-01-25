@@ -40,10 +40,20 @@ public enum ResourceType {
                     .min()
                     .orElse(0);
 
+    public static final int MIN_PURCHASE_PRICE =
+            Arrays.stream(ResourceType.values())
+                    .mapToInt(ResourceType::getPurchasePrice)
+                    .min()
+                    .orElse(0);
+
     private final int id;
     private final int price;
     private final String displayName;
     private final boolean isRequired;
+
+    public int getPurchasePrice() {
+        return price - 1;
+    }
 
     public String toString() {
         return id + ". " + displayName + " " + price + "$";
