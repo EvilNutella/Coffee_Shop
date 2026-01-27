@@ -34,12 +34,6 @@ public enum ResourceType {
                     .max()
                     .orElse(0);
 
-    public static final int MIN_PRICE =
-            Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getPrice)
-                    .min()
-                    .orElse(0);
-
     public static final int MIN_PURCHASE_PRICE =
             Arrays.stream(ResourceType.values())
                     .mapToInt(ResourceType::getPurchasePrice)
@@ -61,7 +55,7 @@ public enum ResourceType {
     }
 
     ResourceType(int id, int price, String displayName, boolean isRequired) {
-        this(id, price, displayName, isRequired, (price - 1));
+        this(id, price, displayName, isRequired, price - 1);
     }
 }
 

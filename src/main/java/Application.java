@@ -175,7 +175,8 @@ public class Application {
                 int numberOfResource = inputValidationFrom1ToMaxId(scanner);
 
                 if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
-                    if (coffeeService.canBuyResource(numberOfResource)) {
+                    ResourceType resource = ResourceType.getById(numberOfResource);
+                    if (coffeeService.buyResource(resource)) {
                         System.out.println("The resource has been purchased! \n");
                     } else {
                         System.out.println("We have no money for this :( \n");

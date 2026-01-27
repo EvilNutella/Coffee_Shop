@@ -39,8 +39,7 @@ public class CoffeeServiceImpl implements CoffeeService {
     }
 
     @Override
-    public boolean canBuyResource(int id) {
-        ResourceType resource = ResourceType.getById(id);
+    public boolean buyResource(ResourceType resource) {
         int purchasePrice = resource.getPurchasePrice();
         boolean wasResourcePurchased = sumProfit >= purchasePrice;
 
