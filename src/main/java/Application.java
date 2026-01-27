@@ -168,9 +168,7 @@ public class Application {
 
                 for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
                     ResourceType resource = ResourceType.getById(id);
-                    if (coffeeService.hasResource(resource)) {
-                        System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
-                    }
+                    System.out.println(resource + ", purchase price: " + (resource.getPrice() - 1) + "$");
                 }
                 System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
                 int numberOfResource = inputValidationFrom1ToMaxId(scanner);
