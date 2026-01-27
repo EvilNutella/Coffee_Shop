@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public enum ResourceType {
-    COFFEE(1, 10, "Coffee", true),
+    COFFEE(1, 10, "Coffee", true, 6),
     SUGAR(2, 2, "Sugar", false),
     SYRUP(3, 3, "Syrup", false),
     DONUT(4, 4, "Donut", false);
@@ -34,9 +34,9 @@ public enum ResourceType {
                     .max()
                     .orElse(0);
 
-    public static final int MIN_PRICE =
+    public static final int MIN_PURCHASE_PRICE =
             Arrays.stream(ResourceType.values())
-                    .mapToInt(ResourceType::getPrice)
+                    .mapToInt(ResourceType::getPurchasePrice)
                     .min()
                     .orElse(0);
 
@@ -44,6 +44,7 @@ public enum ResourceType {
     private final int price;
     private final String displayName;
     private final boolean isRequired;
+    private final int purchasePrice;
 
     public String toString() {
         return id + ". " + displayName + " " + price + "$";
@@ -53,6 +54,11 @@ public enum ResourceType {
         return RESOURCE_BY_ID.get(id);
     }
 
+    ResourceType(int id, int price, String displayName, boolean isRequired) {
+        this(id, price, displayName, isRequired, price - 1);
+    }
 }
+
+
 
 

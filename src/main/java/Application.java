@@ -159,11 +159,10 @@ public class Application {
         do {
             needToRepeat = false;
             int sumAtStorage = coffeeService.getSumProfit();
-            int minPriceForResource = ResourceType.MIN_PRICE;
 
             printAllResource();
 
-            if (sumAtStorage > minPriceForResource) {
+            if (sumAtStorage >= ResourceType.MIN_PURCHASE_PRICE) {
                 System.out.println("What resource needs to be purchased?");
 
                 for (int id = 1; id < MAX_ID_OF_RESOURCES_PLUS_ONE; id++) {
@@ -174,7 +173,8 @@ public class Application {
                 int numberOfResource = inputValidationFrom1ToMaxId(scanner);
 
                 if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
-                    if (coffeeService.canBuyResource(numberOfResource)) {
+                    ResourceType resource = ResourceType.getById(numberOfResource);
+                    if (coffeeService.buyResource(resource)) {
                         System.out.println("The resource has been purchased! \n");
                     } else {
                         System.out.println("We have no money for this :( \n");
@@ -232,24 +232,25 @@ public class Application {
 
     private static void printCurrentOrderAndTotalAmount() {
         Map<ResourceType, Integer> currentOrderQuantityByType = coffeeService.getCurrentOrder();
-        System.out.println("Currently on order: ");
 
-        currentOrderQuantityByType.forEach((resourceType, integer) -> {
-            System.out.println(resourceType + " x " + integer);
-        });
+        System.out.println("Currently on order: ");
+        printListOfResource(currentOrderQuantityByType);
 
         System.out.println("Total: " + coffeeService.getTotalOrderAmount() + " $");
+    }
+
+    private static void printListOfResource(Map<ResourceType, Integer> resourcesQuantityByType) {
+        resourcesQuantityByType.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
+                .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
     }
 
     private static void printAllResource() {
         Map<ResourceType, Integer> ResourceAtStorageQuantityByType = coffeeService.getAllResources();
 
         System.out.println("Currently at storage: ");
-
-        ResourceAtStorageQuantityByType.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceType::getId)))
-                .forEach(entry -> System.out.println(entry.getKey() + " x " + entry.getValue()));
+        printListOfResource(ResourceAtStorageQuantityByType);
 
         System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
     }
