@@ -8,30 +8,40 @@ import java.util.Scanner;
 
 public class Application {
     private static final int MAX_ID_OF_RESOURCES_PLUS_ONE = ResourceType.MAX_ID + 1;
+    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final int RUN_AS_ADMIN_MENU_NUMBER_OF_OPTIONS = 3;
+    private static final int ROLE_SELECTION_MENU_NUMBER_OF_OPTIONS = 3;
 
     private static CoffeeService coffeeService = new CoffeeServiceImpl();
     private static boolean isThatNotAll = true;
 
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to our cafe!");
         addMissingRequiredResources();
 
         do {
+            showRoleSelectionMenu();
+        } while (isThatNotAll);
+    }
+
+    private static void makeTheOrder() {
+        boolean continueOrdering = true;
+
+        while (continueOrdering) {
             printCurrentOrderAndTotalAmount();
             System.out.println("Would you like to add something in order? Yes/No");
-
-            String userInput = getUserInput(scanner);
+            String userInput = getUserInput();
 
             if (userInput.equalsIgnoreCase("Yes")) {
-                suggestAnAction(scanner);
+                suggestAnAction();
             } else if (userInput.equalsIgnoreCase("No")) {
-                showAfterStartMenu(scanner);
+                confirmOrder();
+                continueOrdering = false;
             } else {
                 printAMessageAboutIncorrectInput();
             }
-        } while (isThatNotAll);
+        }
     }
 
     private static void addMissingRequiredResources() {
@@ -47,49 +57,30 @@ public class Application {
 
     }
 
-    private static String getUserInput(Scanner scanner) {
-        String userInput = scanner.nextLine();
+    private static String getUserInput() {
+        String userInput = SCANNER.nextLine();
         System.out.println();
         return userInput;
     }
 
-    private static void showAfterStartMenu(Scanner scanner) {
-        boolean needToRepeat;
-        do {
-            needToRepeat = false;
+    private static void showRoleSelectionMenu() {
+        while (isThatNotAll) {
             System.out.println("Do you want to: \n" +
-                    "1. Confirm order. \n" +
+                    "1. Make the order. \n" +
                     "2. Run as administrator. \n" +
                     "3. Thank you, I have to go.");
 
-            if (scanner.hasNextInt()) {
-                int numberOfAction = scanner.nextInt();
-                getUserInput(scanner);
+            int numberOfAction = getValidIntInput(ROLE_SELECTION_MENU_NUMBER_OF_OPTIONS);
 
-                switch (numberOfAction) {
-                    case 1 -> {
-                        printCurrentOrderAndTotalAmount();
-                        confirmOrder(scanner);
-                    }
-                    case 2 -> {
-                        int action = runAsAdmin(scanner);
-                        processingAdminActions(action, scanner);
-                    }
-                    case 3 -> {
-                        System.out.println("Have a good day!");
-                        isThatNotAll = false;
-                    }
-                    default -> {
-                        printAMessageAboutIncorrectInput();
-                        needToRepeat = true;
-                    }
+            switch (numberOfAction) {
+                case 1 -> makeTheOrder();
+                case 2 -> processingAdminActions();
+                case 3 -> {
+                    System.out.println("Have a good day!");
+                    isThatNotAll = false;
                 }
-            } else {
-                printAMessageAboutIncorrectInput();
-                getUserInput(scanner);
-                needToRepeat = true;
             }
-        } while (needToRepeat);
+        }
     }
 
     private static void suggestExistResources() {
@@ -101,59 +92,30 @@ public class Application {
         }
     }
 
-    private static int runAsAdmin(Scanner scanner) {
-        boolean needToRepeat;
-        int numberOfActionForAdmin = 0;
+    private static int runAsAdmin() {
+        System.out.println("What would you like to do as administrator?");
+        System.out.println("1. Show all available resources in stock; \n" +
+                "2. Purchase resources. \n" +
+                "3. Back.");
 
-        do {
-            needToRepeat = false;
-            System.out.println("What would you like to do as administrator?");
-            System.out.println("1. Show all available resources in stock; \n" +
-                    "2. Purchase resources. \n" +
-                    "3. Back.");
-
-            if (scanner.hasNextInt()) {
-                numberOfActionForAdmin = scanner.nextInt();
-                getUserInput(scanner);
-            } else {
-                printAMessageAboutIncorrectInput();
-                getUserInput(scanner);
-                needToRepeat = true;
-            }
-        } while (needToRepeat);
-        return numberOfActionForAdmin;
+        return getValidIntInput(RUN_AS_ADMIN_MENU_NUMBER_OF_OPTIONS);
     }
 
-    private static void printAMessageAboutIncorrectInput() {
-        System.out.println("Please, only the answers given." + "\n");
-    }
+    private static void processingAdminActions() {
+        boolean keepRunning = true;
 
-    private static void processingAdminActions(int action, Scanner scanner) {
-        boolean needToRepeat = true;
+        while (keepRunning) {
+            int action = runAsAdmin();
 
-        do {
             switch (action) {
-                case 1 -> {
-                    printAllResource();
-                    action = runAsAdmin(scanner);
-                }
-                case 2 -> {
-                    purchaseResources(scanner);
-                    action = runAsAdmin(scanner);
-                }
-                case 3 -> {
-                    suggestAnAction(scanner);
-                    needToRepeat = false;
-                }
-                default -> {
-                    printAMessageAboutIncorrectInput();
-                    action = runAsAdmin(scanner);
-                }
+                case 1 -> printAllResource();
+                case 2 -> purchaseResources();
+                case 3 -> keepRunning = false;
             }
-        } while (needToRepeat);
+        }
     }
 
-    private static void purchaseResources(Scanner scanner) {
+    private static void purchaseResources() {
         boolean needToRepeat;
 
         do {
@@ -170,64 +132,91 @@ public class Application {
                     System.out.println(resource + ", purchase price: " + resource.getPurchasePrice() + "$");
                 }
                 System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
-                int numberOfResource = inputValidationFrom1ToMaxId(scanner);
+                int numberOfResource = getValidIntInput(MAX_ID_OF_RESOURCES_PLUS_ONE);
 
                 if (numberOfResource < MAX_ID_OF_RESOURCES_PLUS_ONE) {
                     ResourceType resource = ResourceType.getById(numberOfResource);
                     if (coffeeService.buyResource(resource)) {
-                        System.out.println("The resource has been purchased! \n");
+                        System.out.println("The resource has been purchased!");
                     } else {
-                        System.out.println("We have no money for this :( \n");
+                        System.out.println("We have no money for this :(");
                     }
                     needToRepeat = true;
-                } else {
-                    suggestAnAction(scanner);
                 }
             } else {
-                System.out.println("We have no money for this :( \n");
+                System.out.println("We have no money for this :(");
             }
         } while (needToRepeat);
     }
 
 
-    private static int inputValidationFrom1ToMaxId(Scanner scanner) {
+    private static int getValidIntInput(int max) {
+        int input = 0;
         boolean isValid = false;
-        int number = 0;
 
         while (!isValid) {
-            if (scanner.hasNextInt()) {
-                number = scanner.nextInt();
-                getUserInput(scanner);
+            if (SCANNER.hasNextInt()) {
+                input = SCANNER.nextInt();
+                getUserInput();
 
-                if (number >= 1 && number <= MAX_ID_OF_RESOURCES_PLUS_ONE) {
+                if (input >= 1 && input <= max) {
                     isValid = true;
                 } else {
                     printAMessageAboutIncorrectInput();
                 }
             } else {
+                getUserInput();
                 printAMessageAboutIncorrectInput();
-                getUserInput(scanner);
             }
         }
-
-        return number;
+        return input;
     }
 
-    private static void suggestAnAction(Scanner scanner) {
+    private static void suggestAnAction() {
         System.out.println("What would you like to add to your order?");
         suggestExistResources();
         System.out.println(MAX_ID_OF_RESOURCES_PLUS_ONE + ". That's all, thank you.");
-        int numberOfAction = inputValidationFrom1ToMaxId(scanner);
-        processSupplement(numberOfAction, scanner);
+
+        int numberOfAction = getValidIntInput(MAX_ID_OF_RESOURCES_PLUS_ONE);
+        processSupplement(numberOfAction);
     }
 
-    private static void processSupplement(int action, Scanner scanner) {
+    private static void processSupplement(int action) {
         if (action < MAX_ID_OF_RESOURCES_PLUS_ONE) {
             coffeeService.addResourceInOrder(ResourceType.getById(action));
-        } else {
-            printCurrentOrderAndTotalAmount();
-            confirmOrder(scanner);
+            System.out.println("Added successfully!");
         }
+    }
+
+    private static void confirmOrder() {
+        boolean needToRepeat;
+
+        printCurrentOrderAndTotalAmount();
+        do {
+            needToRepeat = false;
+            System.out.println("Confirm order? Yes/No");
+            String answer = getUserInput();
+
+            if (answer.equalsIgnoreCase("yes")) {
+                coffeeService.calculateRevenue();
+                System.out.println("The order is confirmed!");
+
+                addMissingRequiredResources();
+
+            } else if (answer.equalsIgnoreCase("no")) {
+                coffeeService.cancelTheOrder();
+                System.out.println("The order has been cancelled.");
+
+                addMissingRequiredResources();
+            } else {
+                System.out.println("Only \"yes\" or \"no\", please.");
+                needToRepeat = true;
+            }
+        } while (needToRepeat);
+    }
+
+    private static void printAMessageAboutIncorrectInput() {
+        System.out.println("Please, only the answers given.");
     }
 
     private static void printCurrentOrderAndTotalAmount() {
@@ -252,33 +241,6 @@ public class Application {
         System.out.println("Currently at storage: ");
         printListOfResource(ResourceAtStorageQuantityByType);
 
-        System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $" + "\n");
-    }
-
-    private static void confirmOrder(Scanner scanner) {
-        boolean needToRepeat;
-
-        do {
-            needToRepeat = false;
-            System.out.println("Confirm order? Yes/No");
-            String answer = getUserInput(scanner);
-
-            if (answer.equalsIgnoreCase("yes")) {
-                printCurrentOrderAndTotalAmount();
-                coffeeService.calculateRevenue();
-                System.out.println("The order is confirmed! \n");
-
-                addMissingRequiredResources();
-
-            } else if (answer.equalsIgnoreCase("no")) {
-                coffeeService.cancelTheOrder();
-                System.out.println("The order has been cancelled.");
-
-                addMissingRequiredResources();
-            } else {
-                System.out.println("Only \"yes\" or \"no\", please.");
-                needToRepeat = true;
-            }
-        } while (needToRepeat);
+        System.out.println("Money in the cash register: " + coffeeService.getSumProfit() + " $");
     }
 }
