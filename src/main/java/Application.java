@@ -18,7 +18,6 @@ public class Application {
 
     public static void main(String[] args) {
         System.out.println("Welcome to our cafe!");
-        addMissingRequiredResources();
 
         do {
             showRoleSelectionMenu();
@@ -27,6 +26,8 @@ public class Application {
 
     private static void makeTheOrder() {
         boolean continueOrdering = true;
+
+        addMissingRequiredResources();
 
         while (continueOrdering) {
             printCurrentOrderAndTotalAmount();
@@ -201,13 +202,10 @@ public class Application {
                 coffeeService.calculateRevenue();
                 System.out.println("The order is confirmed!");
 
-                addMissingRequiredResources();
-
             } else if (answer.equalsIgnoreCase("no")) {
                 coffeeService.cancelTheOrder();
                 System.out.println("The order has been cancelled.");
 
-                addMissingRequiredResources();
             } else {
                 System.out.println("Only \"yes\" or \"no\", please.");
                 needToRepeat = true;
